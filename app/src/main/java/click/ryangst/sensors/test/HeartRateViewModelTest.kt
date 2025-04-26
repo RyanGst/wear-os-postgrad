@@ -1,4 +1,4 @@
-package click.ryangst.sensors.presentation.test
+package click.ryangst.sensors.test
 
 import click.ryangst.sensors.presentation.HeartRateViewModel
 import org.junit.Assert.*

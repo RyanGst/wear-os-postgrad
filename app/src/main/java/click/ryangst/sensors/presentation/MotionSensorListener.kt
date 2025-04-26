@@ -3,7 +3,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
-import click.ryangst.sensors.presentation.Config
+import click.ryangst.sensors.Config
 import kotlin.math.abs
 import kotlin.math.sqrt
 

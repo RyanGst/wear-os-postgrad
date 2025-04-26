@@ -1,6 +1,10 @@
+package click.ryangst.sensors
+
+import MotionSensorListener
+import RestingStageScreen
 import android.Manifest
+
 import android.app.AlertDialog
-import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Sensor
@@ -8,20 +12,15 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
-import android.os.VibratorManager
 import android.transition.TransitionManager
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.wear.tooling.preview.devices.WearDevices
+import click.ryangst.sensors.Config
 import click.ryangst.sensors.R
-import click.ryangst.sensors.presentation.Config
-import click.ryangst.sensors.presentation.theme.SensorsTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
             ActivityCompat.requestPermissions(
                 this, arrayOf(
                     android.Manifest.permission.POST_NOTIFICATIONS,
-                    android.Manifest.permission.VIBRATE
+//                    android.Manifest.permission.VIBRATE
                 ), 1
             )
             return
@@ -54,13 +53,13 @@ class MainActivity : ComponentActivity() {
             sendImmobilityNotification()
         }
 
-        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            vibratorManager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION")
-            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        }
+//        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+//            vibratorManager.defaultVibrator
+//        } else {
+//            @Suppress("DEPRECATION")
+//            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+//        }
 
         sensorManager.registerListener(
             motionSensorListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL
