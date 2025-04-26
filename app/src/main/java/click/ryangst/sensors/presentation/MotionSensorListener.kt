@@ -15,6 +15,11 @@ class MotionSensorListener(
     private var isImmobileNotified = false
     private var lastLoggedSecond = 0
 
+    fun resetTimer() {
+        lastMovementTime = System.currentTimeMillis()
+        lastLoggedSecond = 0
+        isImmobileNotified = false
+    }
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let {

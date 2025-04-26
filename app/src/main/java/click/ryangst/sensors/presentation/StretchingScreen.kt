@@ -27,10 +27,14 @@ import androidx.wear.compose.material.dialog.Alert
 import kotlinx.coroutines.delay
 
 @Composable
-fun StretchingScreen() {
+fun StretchingScreen(
+    onBackToResting: () -> Unit,
+    onRestartListener: () -> Unit
+) {
 
     var currentTime by remember { mutableStateOf(0) }
     var isRunning by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isRunning) {
         if (isRunning && currentTime < 10) {
@@ -39,22 +43,33 @@ fun StretchingScreen() {
                 currentTime++
             }
             isRunning = false
+            showDialog = true // Quando acaba, mostra o Dialog
         }
     }
 
-    if (currentTime == 10) {
-        AlertDialog(onDismissRequest = {},
-            title = { Text("Bom trabalho!") },
-            text = { Text("Você fez um belo alongamento!") },
-            confirmButton = {
-                Button(
-                    onClick = {}
-                ) {
-                    Text("OK")
-                }
+    if (showDialog) {
+        StretchingCompletedDialog(
+            onOkClicked = {
+                showDialog = false
+                onBackToResting()
+                onRestartListener()
             }
         )
     }
+
+//    if (currentTime == 10) {
+//        AlertDialog(onDismissRequest = {},
+//            title = { Text("Bom trabalho!") },
+//            text = { Text("Você fez um belo alongamento!") },
+//            confirmButton = {
+//                Button(
+//                    onClick = {}
+//                ) {
+//                    Text("OK")
+//                }
+//            }
+//        )
+//    }
 
 
     Surface(
@@ -94,4 +109,22 @@ fun StretchingScreen() {
         }
     }
 
+}
+
+@Composable
+fun StretchingCompletedDialog(
+    onOkClicked: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onOkClicked,
+        title = { Text("Bom trabalho!") },
+        text = { Text("Você fez um belo alongamento!") },
+        confirmButton = {
+            Button(
+                onClick = { onOkClicked() }
+            ) {
+                Text("OK")
+            }
+        }
+    )
 }

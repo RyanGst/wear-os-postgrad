@@ -23,7 +23,9 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.tooling.preview.devices.WearDevices
 
 @Composable
-fun RestingStageScreen() {
+fun RestingStageScreen(
+    onRestartListener: () -> Unit
+) {
 
       Surface(
         modifier = Modifier.fillMaxSize(),

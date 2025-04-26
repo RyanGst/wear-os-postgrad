@@ -39,7 +39,12 @@ class MainActivity : ComponentActivity() {
             var currentScreen by remember { mutableStateOf("resting") }
 
             val onStartStretching = {
+                sensorManager.unregisterListener(motionSensorListener)
                 currentScreen = "stretching"
+            }
+
+            val onBackToResting = {
+                currentScreen = "resting"
             }
 
             sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -66,8 +71,13 @@ class MainActivity : ComponentActivity() {
                 Log.d("WARN", "TELA ATUALLLL");
                 Log.d("WARN", currentScreen);
                 when (currentScreen) {
-                    "resting" -> RestingStageScreen()
-                    "stretching" -> StretchingScreen()
+                    "resting" -> RestingStageScreen(
+                        onRestartListener = { restartMotionSensorListener() }
+                    )
+                    "stretching" -> StretchingScreen(
+                        onBackToResting = onBackToResting,
+                        onRestartListener = { restartMotionSensorListener() }
+                    )
                 }
             }
         }
@@ -77,6 +87,14 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         sensorManager.unregisterListener(motionSensorListener)
+    }
+
+    private fun restartMotionSensorListener() {
+        motionSensorListener.resetTimer() // 👈 zera tudo antes
+        sensorManager.unregisterListener(motionSensorListener)
+        sensorManager.registerListener(
+            motionSensorListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 
     private fun sendImmobilityNotification(onStartStretching: () -> Unit) {
