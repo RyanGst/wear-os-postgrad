@@ -6,14 +6,19 @@ import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionManager
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.wear.tooling.preview.devices.WearDevices
 import click.ryangst.sensors.R
 import click.ryangst.sensors.presentation.Config
+import click.ryangst.sensors.presentation.theme.SensorsTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -50,6 +55,12 @@ class MainActivity : ComponentActivity() {
             accelerometer,
             SensorManager.SENSOR_DELAY_NORMAL
         )
+
+        setContent {
+            SensorsTheme {
+                RestingStageScreen(1)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -58,6 +69,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun sendImmobilityNotification() {
+        TransitionManager.beginDelayedTransition(findViewById(android.R.id.content))
         runOnUiThread {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.timeout_title))
@@ -68,10 +80,11 @@ class MainActivity : ComponentActivity() {
                 .show()
         }
     }
+
 }
 
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
-    HeartRateScreen(222)
+    RestingStageScreen(222)
 }

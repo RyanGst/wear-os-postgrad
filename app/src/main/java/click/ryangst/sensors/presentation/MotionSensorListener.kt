@@ -45,7 +45,7 @@ class MotionSensorListener(
                     lastLoggedSecond = secondsWithoutMovement
                 }
 
-                if (secondsWithoutMovement >= 10 && !isImmobileNotified) {
+                if (secondsWithoutMovement >=  Config.INNACTIVE_TIMEOUT / 1000 && !isImmobileNotified) {
                     isImmobileNotified = true
                     onImmobilityDetected()
                 }
