@@ -1,5 +1,6 @@
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -20,56 +22,40 @@ import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 
 @Composable
-fun RestingStageScreen(heartRate : Int) {
+fun RestingStageScreen(immobileDurationSeconds : Int) {
 
-    val (backgroundColor, statusText) = when {
-        heartRate <= 100 -> Pair(Color(0xFF1B5E20), "✅ Normal")
-        heartRate in 101..120 -> Pair(Color(0xFFFFA000), "⚠️ Frequência Alterada")
-        else -> Pair(Color.Red, "🚨 Frequência Elevada!")
-    }
-
-    val animateColor by animateColorAsState(
-        targetValue = backgroundColor,
-        label = "bgColor"
-    )
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize().background(animateColor),
-        color = animateColor
+      Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color(0xFF37474F)
     ) {
-
         Box(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    text = "Frequência Cardíaca",
+                    text = "🕒",
+                    style = MaterialTheme.typography.displayMedium,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Inatividade Detectada",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
+                    color = Color.White,
+                    textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "$heartRate bpm",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = statusText,
+                    text = "Você está parado há $immobileDurationSeconds segundos.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
+                    color = Color.LightGray,
+                    textAlign = TextAlign.Center
                 )
-
             }
-
         }
-
     }
 }
 
