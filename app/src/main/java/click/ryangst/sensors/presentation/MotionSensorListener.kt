@@ -3,6 +3,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import click.ryangst.sensors.presentation.Config
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -37,7 +38,7 @@ class MotionSensorListener(
                     isImmobileNotified = false
                 }
             } else {
-                val secondsWithoutMovement = ((now - lastMovementTime) / 1000).toInt()
+                val secondsWithoutMovement = ((now - lastMovementTime) / Config.INNACTIVE_TIMEOUT).toInt()
 
                 if (secondsWithoutMovement > 0 && secondsWithoutMovement != lastLoggedSecond) {
                     Log.d("MovementSensor", "Parado há $secondsWithoutMovement segundos")

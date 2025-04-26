@@ -8,7 +8,12 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.wear.tooling.preview.devices.WearDevices
+import click.ryangst.sensors.R
+import click.ryangst.sensors.presentation.Config
 
 class MainActivity : ComponentActivity() {
 
@@ -53,31 +58,20 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun sendImmobilityNotification() {
-        // dispara uma notificação
-//        val builder = NotificationCompat.Builder(this, "motion_channel")
-//            .setSmallIcon(R.drawable.ic_launcher_foreground)
-//            .setContentTitle("Sem movimento detectado")
-//            .setContentText("Você está parado há mais de 10 segundos.")
-//            .setPriority(NotificationCompat.PRIORITY_HIGH)
-//
-//        val notificationManager = NotificationManagerCompat.from(this)
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.POST_NOTIFICATIONS
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            Log.d("WARN", "Não permitido notificar")
-//            return
-//        }
-//        notificationManager.notify(1001, builder.build())
         runOnUiThread {
             AlertDialog.Builder(this)
-                .setTitle("Imobilidade Detectada")
-                .setMessage("Você está parado há 10 segundos.")
+                .setTitle(getString(R.string.timeout_title))
+                .setMessage("Você está parado há ${Config.INNACTIVE_TIMEOUT / 1000} segundos.")
                 .setPositiveButton("Ok") { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
         }
     }
+}
+
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Composable
+fun DefaultPreview() {
+    HeartRateScreen(222)
 }
