@@ -38,14 +38,19 @@ class MotionSensorListener(
                     isImmobileNotified = false
                 }
             } else {
-                val secondsWithoutMovement = ((now - lastMovementTime) / Config.INNACTIVE_TIMEOUT).toInt()
+                // Calculate elapsed time in milliseconds
+                val elapsedMillis = now - lastMovementTime
+                val elapsedSeconds = (elapsedMillis / 1000).toInt()
 
-                if (secondsWithoutMovement > 0 && secondsWithoutMovement != lastLoggedSecond) {
-                    Log.d("MovementSensor", "Parado há $secondsWithoutMovement segundos")
-                    lastLoggedSecond = secondsWithoutMovement
+                // Log every second if needed (optional)
+                if (elapsedSeconds > 0 && elapsedSeconds != lastLoggedSecond) {
+                    Log.d("MovementSensor", "Parado há $elapsedSeconds segundos")
+                    lastLoggedSecond = elapsedSeconds
                 }
 
-                if (secondsWithoutMovement >=  Config.INNACTIVE_TIMEOUT / 1000 && !isImmobileNotified) {
+                // Check if timeout reached
+                if (elapsedMillis >= Config.INNACTIVE_TIMEOUT && !isImmobileNotified) {
+                    Log.d("MovementSensor", "Imobilidade detectada após ${Config.INNACTIVE_TIMEOUT / 1000} segundos.")
                     isImmobileNotified = true
                     onImmobilityDetected()
                 }
