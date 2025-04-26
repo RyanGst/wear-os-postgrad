@@ -52,11 +52,14 @@ class MotionSensorListener(
                 if (elapsedMillis >= Config.INNACTIVE_TIMEOUT && !isImmobileNotified) {
                     Log.d("MovementSensor", "Imobilidade detectada após ${Config.INNACTIVE_TIMEOUT / 1000} segundos.")
                     isImmobileNotified = true
+                    lastMovementTime = now
+                    lastLoggedSecond = 0
                     onImmobilityDetected()
                 }
             }
         }
     }
+
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 

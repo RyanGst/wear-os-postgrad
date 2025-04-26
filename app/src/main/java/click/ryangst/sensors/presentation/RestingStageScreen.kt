@@ -19,10 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.TimeText
 import androidx.wear.tooling.preview.devices.WearDevices
 
 @Composable
-fun RestingStageScreen(immobileDurationSeconds : Int) {
+fun RestingStageScreen() {
 
       Surface(
         modifier = Modifier.fillMaxSize(),
@@ -41,27 +42,8 @@ fun RestingStageScreen(immobileDurationSeconds : Int) {
                     style = MaterialTheme.typography.displayMedium,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Inatividade Detectada",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Você está parado há $immobileDurationSeconds segundos.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.LightGray,
-                    textAlign = TextAlign.Center
-                )
+
             }
         }
     }
-}
-
-
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun RestingStageScreenPreview() {
-    RestingStageScreen(222)
 }
