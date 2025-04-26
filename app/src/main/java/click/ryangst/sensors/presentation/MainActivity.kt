@@ -1,99 +1,83 @@
-/* While this template provides a good starting point for using Wear Compose, you can always
- * take a look at https://github.com/android/wear-os-samples/tree/main/ComposeStarter to find the
- * most up to date changes to the libraries and their usages.
- */
-
-package click.ryangst.sensors.presentation
-
-import HeartRateScreen
+import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Sensor
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.wear.tooling.preview.devices.WearDevices
-import click.ryangst.sensors.presentation.theme.SensorsTheme
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var sensorManager: SensorManager;
+    private lateinit var sensorManager: SensorManager
+    private lateinit var accelerometer: Sensor
+    private lateinit var motionSensorListener: MotionSensorListener
 
-    private var heartRateSensor: Sensor? = null;
-
-    private var sensorListener: SensorEventListener? = null
-
-    private val heartRateViewModel = HeartRateViewModel()
-
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-
         super.onCreate(savedInstanceState)
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BODY_SENSORS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.BODY_SENSORS), 1);
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                1
+            )
+            return
         }
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
 
-        heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
+        motionSensorListener = MotionSensorListener {
+            sendImmobilityNotification()
+        }
 
+        sensorManager.registerListener(
+            motionSensorListener,
+            accelerometer,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        sensorManager.unregisterListener(motionSensorListener)
+    }
 
-        setTheme(android.R.style.Theme_DeviceDefault)
-
-        setContent {
-
-            val heartRateState by remember { heartRateViewModel.heartRate }
-
-            LaunchedEffect(Unit) {
-
-                val listener = object : SensorEventListener {
-                    override fun onSensorChanged(event: android.hardware.SensorEvent) {
-                        event.values.firstOrNull()?.let { heartRateViewModel.updateHeartRate(it)  }
-                    }
-
-                    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    private fun sendImmobilityNotification() {
+        // dispara uma notificação
+//        val builder = NotificationCompat.Builder(this, "motion_channel")
+//            .setSmallIcon(R.drawable.ic_launcher_foreground)
+//            .setContentTitle("Sem movimento detectado")
+//            .setContentText("Você está parado há mais de 10 segundos.")
+//            .setPriority(NotificationCompat.PRIORITY_HIGH)
+//
+//        val notificationManager = NotificationManagerCompat.from(this)
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.POST_NOTIFICATIONS
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            Log.d("WARN", "Não permitido notificar")
+//            return
+//        }
+//        notificationManager.notify(1001, builder.build())
+        runOnUiThread {
+            AlertDialog.Builder(this)
+                .setTitle("Imobilidade Detectada")
+                .setMessage("Você está parado há 10 segundos.")
+                .setPositiveButton("Ok") { dialog, _ ->
+                    dialog.dismiss()
                 }
-
-
-                sensorListener = listener
-
-                heartRateSensor?.let {
-                    sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_NORMAL)
-                }
-            }
-
-            DisposableEffect(Unit) {
-                onDispose {
-                    sensorListener?.let {
-                        sensorManager.unregisterListener(it)
-                    }
-                }
-            }
-
-            SensorsTheme {
-                HeartRateScreen(heartRateViewModel.heartRate.value)
-            }
-
+                .show()
         }
     }
-}
-
-
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    HeartRateScreen(222)
 }
